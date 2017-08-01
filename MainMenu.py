@@ -2,23 +2,17 @@ import os
 import time
 import random
 
+global capitals_list ; capitals_list = []
+global tries ; tries = "NaN"
+global guessed ;guessed = "NaN"
 
 def load_countries_and_capitals():
-
-    # global capitals_list
-    capitals_list = []
-
+    global capitals_list
     for line in open("countries_and_capitals", 'r').readlines():
         temp = []
         temp.append(line.split(" | ")[0].upper())
         temp.append(line.split(" | ")[1].replace('\n', "").upper())
         capitals_list.append(temp)
-        # print(temp.__str__())
-
-    # print (time.strftime('%X %x'))
-
-    return capitals_list
-
 
 def draw_menu_scene(badAnswer):
 
@@ -37,6 +31,9 @@ def draw_menu_scene(badAnswer):
         if choice == "1":
             global guessingTime
             guessingTime = time.time()
+            GuessingCapitalCountry = pick_random_capital(capitals_list)
+            change_capital_to_dash(GuessingCapitalCountry)
+            stage()
         elif choice == "2":
             ...
         elif choice == "3":
@@ -96,17 +93,13 @@ def change_capital_to_dash(guessing_capital):
 
 
 def main():
-
-    # draw_menu_scene(False)
-    capital_list = load_countries_and_capitals()
-    GuessingCapitalCountry = pick_random_capital(capital_list)
-    print(GuessingCapitalCountry)
-
-    change_capital_to_dash(GuessingCapitalCountry)
+    load_countries_and_capitals()
+    draw_menu_scene(False)
 
 
-if __name__ == '__main__':
-    main()
+
+
+
 
 
 
@@ -120,17 +113,18 @@ def stage():
         if line.__contains__("%LIVES") and line.__contains__("%TIME"):
             ActualTime = time.time()
             line.replace("%LIVES", lifes())
-
             timeDifference = guessingTime - ActualTime
-            line.replace("%TIME", timeDifference)
+            line.replace("%TIME", timeDifference.__str__())
         if line.__contains__("%TRIES"):
             line.replace("%TRIES", tries)
         if line.__contains__("%GUESSED"):
             line.replace("%GUESSED", guessed)
-
-            line.replace("%TIME", lifes())
-        if(line.__contains__("%TRIES")):
+        if line.__contains__("%TRIES"):
             pass
+        if line.__contains__("%CAPITAL"):
+            line.replace("%CAPITAL")
+def check_if_asnwer_correct():
+    pass  # Funkcja pobiera informacje o lieterze/slowie uzytkowinika i podmienia _ w zgadywanym miescie na litery, argument zgadywana stolica, return liste stringow
 
 
 def dash():
@@ -138,14 +132,10 @@ def dash():
 
 def lifes():
     pass # Funkcja pobiera info o tym czy zgadujesz miasto czy litere i w zaleznosci od tego odejmuje zycia, zwraca informacje jesli zostalo jedno zycie, return zmienna
-
+    return "NaN"
 def hint():
     pass # Funkcja pobiera parametr/argument o ostatnim zyciu i zwraca informacje do stage o printowaniu podpowiedzi w postaci Panstwa, argument zmienna life, return string nazwa panstwa
 
-def check_if_asnwer_correct():
-    global tries
-    global guessed
-    pass # Funkcja pobiera informacje o lieterze/slowie uzytkowinika i podmienia _ w zgadywanym miescie na litery, argument zgadywana stolica, return liste stringow
 
 def winner_name():
     pass # Funkcja || Argument: True/False || Return stringow
@@ -161,3 +151,6 @@ def save_highscore():
 
 def lose_stage():
     pass # Funkcja printuje ekran przegranej i pyta o ponowna gre || Argument: lifes || Return None
+
+if __name__ == '__main__':
+    main()
