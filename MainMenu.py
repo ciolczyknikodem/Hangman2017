@@ -33,7 +33,8 @@ def draw_menu_scene(badAnswer):
         if badAnswer == True:
             choice = input("Bad Choice, Try Again: ")
         if choice == "1":
-            ...
+            global guessingTime
+            guessingTime = time.time()
         elif choice == "2":
             ...
         elif choice == "3":
@@ -69,11 +70,19 @@ if __name__ == '__main__':
 def randm_pick_capital():
     pass # Nikodem, funkcja pobiera liste panstw losuje i zwraca jedno panstwo i maisto,|| Argument: lista panstw ||  Return liste
 
-def choese_letter/word():
+def choese_letter_word():
     pass # Nikodem, funkcja wyboru zgadywania slowa lub liter
 
 def stage():
     pass # Kamil, ekran glowny wyswietlanie life, time i asci art hangman, wykorzystane litery
+    for line in open("countries_and_capitals", 'r').readlines():
+        if(line.__contains__("%LIVES") and line.__contains__("%TIME")):
+            ActualTime = time.time()
+            line.replace("%LIVES", lifes())
+            line.replace("%TIME", lifes())
+        if(line.__contains__("%TRIES")):
+
+
 
 def dash():
     pass # Tablica dwuindeksowa, pierwszt indeks = stolica, a drugi funckaj zamienia stolice na _, argument stolica, return liste stringow
@@ -85,6 +94,7 @@ def hint():
     pass # Funkcja pobiera parametr/argument o ostatnim zyciu i zwraca informacje do stage o printowaniu podpowiedzi w postaci Panstwa, argument zmienna life, return string nazwa panstwa
 
 def check_if_asnwer_correct():
+    global tries
     pass # Funkcja pobiera informacje o lieterze/slowie uzytkowinika i podmienia _ w zgadywanym miescie na litery, argument zgadywana stolica, return liste stringow
 
 def winner_name():
