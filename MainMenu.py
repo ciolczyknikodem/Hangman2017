@@ -91,17 +91,19 @@ def random_pick_capital():
     pass # Nikodem, funkcja pobiera liste panstw losuje i zwraca jedno panstwo i maisto,|| Argument: lista panstw ||  Return liste
     """DONE"""
 
-def choese_letter_word():
-    pass # Nikodem, funkcja wyboru zgadywania slowa lub liter
-
 def stage():
     pass # Kamil, ekran glowny wyswietlanie life, time i asci art hangman, wykorzystane litery
-    for line in open("countries_and_capitals", 'r').readlines():
-        if(line.__contains__("%LIVES") and line.__contains__("%TIME")):
+    for line in open("MainGameScene", 'r').readlines():
+        if line.__contains__("%LIVES") and line.__contains__("%TIME"):
             ActualTime = time.time()
             line.replace("%LIVES", lifes())
-            line.replace("%TIME", lifes())
-        if(line.__contains__("%TRIES")):
+            timeDifference = guessingTime - ActualTime
+            line.replace("%TIME", timeDifference)
+        if line.__contains__("%TRIES"):
+            line.replace("%TRIES", tries)
+        if line.__contains__("%GUESSED"):
+            line.replace("%GUESSED", guessed)
+
 
 
 
@@ -116,6 +118,7 @@ def hint():
 
 def check_if_asnwer_correct():
     global tries
+    global guessed
     pass # Funkcja pobiera informacje o lieterze/slowie uzytkowinika i podmienia _ w zgadywanym miescie na litery, argument zgadywana stolica, return liste stringow
 
 def winner_name():
