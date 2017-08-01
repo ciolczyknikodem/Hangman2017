@@ -3,8 +3,10 @@ import time
 import random
 
 global capitals_list ; capitals_list = []
-global tries ; tries = "NaN"
-global guessed ;guessed = "NaN"
+global tries ; tries = []
+global guessed ; guessed = []
+global costume_state ; costume_state = 0
+global lives ; lives = 6
 
 def load_countries_and_capitals():
     global capitals_list
@@ -14,25 +16,24 @@ def load_countries_and_capitals():
         temp.append(line.split(" | ")[1].replace('\n', "").upper())
         capitals_list.append(temp)
 
-def draw_menu_scene(badAnswer):
-
-    os.system('clear')
+def draw_menu_scene():
+    bad_answer = False
+    global costume_state
+    costume_state = 6
     scene = open("MainMenuScene", 'r').readlines()
-
-    for line in scene:
-        print (line, end='')
-
-    while(True):
+    global x
+    x = True
+    while(x):
+        os.system('clear')
+        for line in scene:
+            print(line, end='')
         choice = None
-        if badAnswer == False:
+        if bad_answer == False:
             choice = input("Your Choice: ")
-        if badAnswer == True:
+        if bad_answer == True:
             choice = input("Bad Choice, Try Again: ")
         if choice == "1":
-            global guessingTime
-            guessingTime = time.time()
-            GuessingCapitalCountry = pick_random_capital(capitals_list)
-            change_capital_to_dash(GuessingCapitalCountry)
+            x = False
             stage()
         elif choice == "2":
             ...
@@ -43,7 +44,8 @@ def draw_menu_scene(badAnswer):
             exit()
 
         else:
-            draw_menu_scene(True)
+            bad_answer = True
+            continue
 
 
 def draw_quit_scene():
@@ -61,12 +63,8 @@ def pick_random_capital(capitals_list):
 
         Function take all capitals with countries, chose 1 of them
         and return 1 randomly position of all capitals/countries """
-
-    GuessingCapitalCountry = []
     GuessingCapitalCountry = random.choice(capitals_list)
-
     return GuessingCapitalCountry
-
 
 def change_capital_to_dash(guessing_capital):
     """ Argument: List of strings
@@ -75,60 +73,77 @@ def change_capital_to_dash(guessing_capital):
         Function take capital as string, make new list, with same number of dashes like guessing capital have"""
 
     guessing_capital = guessing_capital[1]
-    print (guessing_capital)
-
     dash_capital = []
-
     for letter in guessing_capital:
-
         if letter == " ":
             dash_capital.append(" ")
-
         elif not letter.isdigit():
             dash_capital.append("_")
-
-    print(" ".join(dash_capital))
-
-    return dash_capital
-
+    globals().__setitem__("dash_capital", dash_capital)
 
 def main():
     load_countries_and_capitals()
-    draw_menu_scene(False)
+    draw_menu_scene()
 
-
-
-
-
-
-
-
-def random_pick_capital():
-    pass # Nikodem, funkcja pobiera liste panstw losuje i zwraca jedno panstwo i maisto,|| Argument: lista panstw ||  Return liste
-    """DONE"""
 
 def stage():
-    pass # Kamil, ekran glowny wyswietlanie life, time i asci art hangman, wykorzystane litery
-    for line in open("MainGameScene", 'r').readlines():
-        if line.__contains__("%LIVES") and line.__contains__("%TIME"):
-            ActualTime = time.time()
-            line.replace("%LIVES", lifes())
-            timeDifference = guessingTime - ActualTime
-            line.replace("%TIME", timeDifference.__str__())
-        if line.__contains__("%TRIES"):
-            line.replace("%TRIES", tries)
-        if line.__contains__("%GUESSED"):
-            line.replace("%GUESSED", guessed)
-        if line.__contains__("%TRIES"):
-            pass
-        if line.__contains__("%CAPITAL"):
-            line.replace("%CAPITAL")
+    globals().__setitem__("guessingTime", time.time())
+    GuessingCapitalCountry = pick_random_capital(capitals_list)
+    change_capital_to_dash(GuessingCapitalCountry)
+    while(True):
+        os.system('clear')
+        for line in open("MainGameScene", 'r').readlines():
+            if line.__contains__("%COSTUME"):
+                draws_a_costume()
+                continue
+            if line.__contains__("%LIVES") and line.__contains__("%TIME"):
+                ActualTime = time.time()
+                line = line.replace("%LIVES", str(globals().get("lives")))
+                timeDifference = ActualTime - globals().get("guessingTime")
+                line = line.replace("%TIME", int(timeDifference).__str__() + " seconds")
+            if line.__contains__("%TRIES"):
+                line = line.replace("%TRIES", tries.__str__())
+            if line.__contains__("%GUESSED"):
+                line = line.replace("%GUESSED", guessed.__str__())
+            if line.__contains__("%TRIES"):
+                line = line.replace("%TRIES", "NaN")
+            if line.__contains__("%CAPITAL"):
+                dash_capital = globals().get("dash_capital")
+                dash_string = " ".join(dash_capital)
+                line = line.replace("%CAPITAL", dash_string)
+            print (line)
+        check_if_asnwer_correct()
+
 def check_if_asnwer_correct():
-    pass  # Funkcja pobiera informacje o lieterze/slowie uzytkowinika i podmienia _ w zgadywanym miescie na litery, argument zgadywana stolica, return liste stringow
+    # Funkcja pobiera informacje o lieterze/slowie uzytkowinika i podmienia _ w zgadywanym miescie na litery, argument zgadywana stolica, return liste stringow
+    answer = input("                                            Guess letter or the whole word (type ! to exit): ")
+    if(answer == "!"):
+        draw_quit_scene()
 
+def draws_a_costume():
+    costumes = open("HangmanPictures", 'r').readlines()
+    if(costume_state == 0):
+        for i in range(0, 8):
+            print("")
+    elif(costume_state == 6):
+        for i in range(9, 18):
+            print(costumes[i])
+    elif(costume_state == 5):
+        for i in range(18, 27):
+            print(costumes[i])
+    elif(costume_state == 4):
+        for i in range(27, 36):
+            print(costumes[i])
+    elif(costume_state == 3):
+        for i in range(36, 45):
+            print(costumes[i])
+    elif(costume_state == 2):
+        for i in range(45, 54):
+            print(costumes[i])
+    elif(costume_state == 1):
+        for i in range(54, 63):
+            print(costumes[i])
 
-def dash():
-    pass # Tablica dwuindeksowa, pierwszt indeks = stolica, a drugi funckaj zamienia stolice na _, argument stolica, return liste stringow
 
 def lifes():
     pass # Funkcja pobiera info o tym czy zgadujesz miasto czy litere i w zaleznosci od tego odejmuje zycia, zwraca informacje jesli zostalo jedno zycie, return zmienna
