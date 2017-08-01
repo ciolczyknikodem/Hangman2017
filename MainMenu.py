@@ -5,19 +5,19 @@ import random
 
 def load_countries_and_capitals():
 
-    # global capital_list
-    capital_list = []
+    # global capitals_list
+    capitals_list = []
 
     for line in open("countries_and_capitals", 'r').readlines():
         temp = []
         temp.append(line.split(" | ")[0].upper())
         temp.append(line.split(" | ")[1].replace('\n', "").upper())
-        capital_list.append(temp)
+        capitals_list.append(temp)
         # print(temp.__str__())
 
     # print (time.strftime('%X %x'))
 
-    return capital_list
+    return capitals_list
 
 
 def draw_menu_scene(badAnswer):
@@ -58,20 +58,41 @@ def draw_quit_scene():
         print (line, end='')
 
 
-def pick_random_capital(capital_list):
+def pick_random_capital(capitals_list):
+    """ Argument: List of strings
+        Return: List of string
+
+        Function take all capitals with countries, chose 1 of them
+        and return 1 randomly position of all capitals/countries """
 
     GuessingCapitalCountry = []
-    GuessingCapitalCountry.append(random.choice(capital_list))
+    GuessingCapitalCountry = random.choice(capitals_list)
 
     return GuessingCapitalCountry
 
 
 def change_capital_to_dash(guessing_capital):
+    """ Argument: List of strings
+        Return: List of dash
 
-    guessing_list = []
+        Function take capital as string, make new list, with same number of dashes like guessing capital have"""
 
-    for x in guessing_capital:
-        pass
+    guessing_capital = guessing_capital[1]
+    print (guessing_capital)
+
+    dash_capital = []
+
+    for letter in guessing_capital:
+
+        if letter == " ":
+            dash_capital.append(" ")
+
+        elif not letter.isdigit():
+            dash_capital.append("_")
+
+    print(" ".join(dash_capital))
+
+    return dash_capital
 
 
 def main():
@@ -80,6 +101,8 @@ def main():
     capital_list = load_countries_and_capitals()
     GuessingCapitalCountry = pick_random_capital(capital_list)
     print(GuessingCapitalCountry)
+
+    change_capital_to_dash(GuessingCapitalCountry)
 
 
 if __name__ == '__main__':
@@ -97,6 +120,7 @@ def stage():
         if line.__contains__("%LIVES") and line.__contains__("%TIME"):
             ActualTime = time.time()
             line.replace("%LIVES", lifes())
+
             timeDifference = guessingTime - ActualTime
             line.replace("%TIME", timeDifference)
         if line.__contains__("%TRIES"):
@@ -104,7 +128,9 @@ def stage():
         if line.__contains__("%GUESSED"):
             line.replace("%GUESSED", guessed)
 
-
+            line.replace("%TIME", lifes())
+        if(line.__contains__("%TRIES")):
+            pass
 
 
 def dash():
