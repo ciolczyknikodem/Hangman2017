@@ -15,6 +15,8 @@ def load_countries_and_capitals():
 
     print (time.strftime('%X %x'))
 
+    return a
+
 
 def draw_menu_scene(badAnswer):
 
@@ -54,9 +56,48 @@ def draw_quit_scene():
 
 
 def main():
+
     # draw_menu_scene(False)
-    load_countries_and_capitals()
+    capital_list = load_countries_and_capitals()
 
 
 if __name__ == '__main__':
     main()
+
+
+
+def randm_pick_capital():
+    pass # Nikodem, funkcja pobiera liste panstw losuje i zwraca jedno panstwo i maisto,|| Argument: lista panstw ||  Return liste
+
+def choese_letter/word():
+    pass # Nikodem, funkcja wyboru zgadywania slowa lub liter
+
+def stage():
+    pass # Kamil, ekran glowny wyswietlanie life, time i asci art hangman, wykorzystane litery
+
+def dash():
+    pass # Tablica dwuindeksowa, pierwszt indeks = stolica, a drugi funckaj zamienia stolice na _, argument stolica, return liste stringow
+
+def lifes():
+    pass # Funkcja pobiera info o tym czy zgadujesz miasto czy litere i w zaleznosci od tego odejmuje zycia, zwraca informacje jesli zostalo jedno zycie, return zmienna
+
+def hint():
+    pass # Funkcja pobiera parametr/argument o ostatnim zyciu i zwraca informacje do stage o printowaniu podpowiedzi w postaci Panstwa, argument zmienna life, return string nazwa panstwa
+
+def check_if_asnwer_correct():
+    pass # Funkcja pobiera informacje o lieterze/slowie uzytkowinika i podmienia _ w zgadywanym miescie na litery, argument zgadywana stolica, return liste stringow
+
+def winner_name():
+    pass # Funkcja || Argument: True/False || Return stringow
+
+def highscore():
+    pass # Funkcja po zakonczeniu gry oblicza ptk ktore uzyskal uzytkowinik, || Argumenty: czas/date, zycia, proby odgadniecia, imie || Return: liste stringow do zapisu
+
+def end_stage_succes():
+    pass # Funkcja printuje tablice wyniku innych graczy, pobiera z pliku info, wylicza ktore miejsce zajales || Argumnet: list highscore || Return Liste wszystkich wynikow np top 10
+
+def save_highscore():
+    pass # Pobiera info od end_stage i zapisuje do pliku info juz z nowym graczem || Argument: list highscore || Return None
+
+def lose_stage():
+    pass # Funkcja printuje ekran przegranej i pyta o ponowna gre || Argument: lifes || Return None
