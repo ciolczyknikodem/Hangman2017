@@ -1,0 +1,22 @@
+LIVES: %LIVES                                                                              TIME: %TIME
+                                             ----------
+                                              |     |
+                                              |     @
+                                              |    /|
+                                              |     |
+                                              |    / \
+                                              |
+                                              |
+                                        ______________`
+
+
+TRIES: %TRIES
+
+
+
+_ _ _ _ _
+
+
+Characters guessed: %GUESSED
+
+Next guess (type ! to exit):
