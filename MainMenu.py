@@ -127,9 +127,7 @@ def stage():
     lifes = 6
     costume_state = 0
     while(True):
-
         os.system('clear')
-
         for line in open("MainGameScene", 'r').readlines():
 
             if line.__contains__("%COSTUME"):
@@ -172,15 +170,11 @@ def stage():
             score_time = round(end - ActualTime, 2)
             leaderboard = open_lader_board()
             highscore(lifes, score_time, tries, GuessingCapitalCountry, leaderboard)
-
-            # exit()
         check_if_asnwer_correct(GuessingCapitalCountry)
 
-
 def check_if_asnwer_correct(guessing_capital):
-
     # Funkcja pobiera informacje o lieterze/slowie uzytkowinika i podmienia _ w zgadywanym miescie na litery, argument zgadywana stolica, return liste stringow
-    capital = str(guessing_capital[1]).upper().replace(" ", '')
+    capital = str(guessing_capital[1]).upper()
     answer = input("                                            Guess letter or the whole word (type ! to exit): ")
     answer = answer.upper()
     dash_capital = globals().get("dash_capital")
@@ -188,7 +182,6 @@ def check_if_asnwer_correct(guessing_capital):
     if answer.isalpha() and answer.__len__() == 1:
         contains = False
         i = 0
-
         for x in capital:
             if(x == answer):
                 dash_capital[i] = answer
@@ -202,11 +195,10 @@ def check_if_asnwer_correct(guessing_capital):
             lifes -=1
         if(guessed.__contains__(answer) == False):
             guessed.append(answer)
+        tries += 1
+    answer = answer.replace(" ", "")
+    capital = capital.replace(" ", "")
     if(answer.isalpha() and answer.__len__() > 1):
-        # print("capital: " + capital)
-        # print("answer: " + answer)
-        # exit()
-
         if(capital == answer):
             globals().__setitem__("dash_capital", answer)
         else:
@@ -215,7 +207,8 @@ def check_if_asnwer_correct(guessing_capital):
             lifes -=2
         if(guessed.__contains__(answer) == False):
             guessed.append(answer)
-    tries += 1
+        tries += 1
+
 
 
 def draws_a_costume():
