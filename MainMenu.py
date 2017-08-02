@@ -7,8 +7,9 @@ import operator
 global capitals_list; capitals_list = []
 global tries; tries = []
 global guessed; guessed = []
-global costume_state; costume_state = 0
-global lifes; lifes = 6
+global costume_state;
+global lifes;
+global dash_capital; dash_capital = []
 
 
 def load_countries_and_capitals():
@@ -25,8 +26,7 @@ def load_countries_and_capitals():
 def draw_menu_scene():
 
     bad_answer = False
-    global costume_state
-    costume_state = 6
+    costume_state = 0
     scene = open("MainMenuScene", 'r').readlines()
     global x
     x = True
@@ -52,7 +52,8 @@ def draw_menu_scene():
         elif choice == "2":
             ...
         elif choice == "3":
-            ...
+            draw_help_scene()
+            x = False
         elif choice == "4":
             draw_quit_scene()
             exit()
@@ -97,16 +98,26 @@ def change_capital_to_dash(guessing_capital):
 
         elif not letter.isdigit():
             dash_capital.append("_")
-
     globals().__setitem__("dash_capital", dash_capital)
 
 
-def stage():
+def draw_help_scene():
+    os.system('clear')
+    lines = open("HelpScene", 'r').readlines()
+    for line in lines:
+        print(line, end='')
+    print("")
+    input("Type any key to back to main menu. ")
+    draw_menu_scene()
 
+def stage():
+    global dash_capital
     globals().__setitem__("guessingTime", time.time())
     GuessingCapitalCountry = pick_random_capital(capitals_list)
     change_capital_to_dash(GuessingCapitalCountry)
-
+    global lifes, costume_state
+    lifes = 6
+    costume_state = 0
     while(True):
 
         os.system('clear')
@@ -128,7 +139,7 @@ def stage():
                 line = line.replace("%TRIES", tries.__str__())
 
             if line.__contains__("%GUESSED"):
-                line = line.replace("%GUESSED", guessed.__str__())
+                line = line.replace("%GUESSED", ",".join(guessed))
 
             if line.__contains__("%TRIES"):
                 line = line.replace("%TRIES", "NaN")
@@ -139,17 +150,24 @@ def stage():
                 line = line.replace("%CAPITAL", dash_string)
 
             if line.__contains__("%HINT"):
-                line = line.replace("%HINT", hint(lifes, GuessingCapitalCountry).__str__())   # Nie wiem czy bedzie potrzebny parametr do wywolania funkcji, ewentualnie do poprawy
+                line = line.replace("%HINT", hint(lifes, GuessingCapitalCountry))   # Nie wiem czy bedzie potrzebny parametr do wywolania funkcji, ewentualnie do poprawy
 
             print (line)
-
+        if(lifes <= 0): # sprawdza czy uzytkownik przegrał
+            print("You have run out of your lives!")
+            time.sleep(1)
+            exit()
+        if(str(dash_capital).__contains__("_") == False): #sprawdza czy użytkownik wygrał
+            print("You won")
+            time.sleep(1)
+            exit()
         check_if_asnwer_correct(GuessingCapitalCountry)
 
 
 def check_if_asnwer_correct(guessing_capital):
 
     # Funkcja pobiera informacje o lieterze/slowie uzytkowinika i podmienia _ w zgadywanym miescie na litery, argument zgadywana stolica, return liste stringow
-    capital = str(guessing_capital[1]).upper()
+    capital = str(guessing_capital[1]).upper().replace(" ", '')
     answer = input("                                            Guess letter or the whole word (type ! to exit): ")
     answer = answer.upper()
     dash_capital = globals().get("dash_capital")
@@ -162,60 +180,74 @@ def check_if_asnwer_correct(guessing_capital):
             if(x == answer):
                 dash_capital[i] = answer
                 contains = True
-            i += 1
-        globals().__setitem__("dash_capital", dash_capital)
-
-    if(answer.isalpha() and answer.__len__() < 1):
-        exit(1)
+            i+=1
+        if(contains == True):
+            globals().__setitem__("dash_capital", dash_capital)
+        else:
+            global  costume_state,lifes
+            costume_state +=1
+            lifes -=1
+        if(guessed.__contains__(answer) == False):
+            guessed.append(answer)
+    if(answer.isalpha() and answer.__len__() > 1):
+        # print("capital: " + capital)
+        # print("answer: " + answer)
+        # exit()
 
         if(capital == answer):
             globals().__setitem__("dash_capital", answer)
+        else:
+            global  costume_state,lifes
+            costume_state +=1
+            lifes -=2
+        if(guessed.__contains__(answer) == False):
+            guessed.append(answer)
 
 
 def draws_a_costume():
 
     costumes = open("HangmanPictures", 'r').readlines()
-
+    global costume_state
     if(costume_state == 0):
 
-        for i in range(0, 8):
+        for i in range(0, 20):
             print("")
 
     elif(costume_state == 6):
 
-        for i in range(9, 18):
+        for i in range(0, 10):
             print(costumes[i])
 
     elif(costume_state == 5):
 
-        for i in range(18, 27):
+        for i in range(9, 19):
             print(costumes[i])
 
     elif(costume_state == 4):
 
-        for i in range(27, 36):
+        for i in range(18, 28):
             print(costumes[i])
 
     elif(costume_state == 3):
 
-        for i in range(36, 45):
+        for i in range(27, 37):
             print(costumes[i])
 
     elif(costume_state == 2):
 
-        for i in range(45, 54):
+        for i in range(36, 46):
             print(costumes[i])
 
     elif(costume_state == 1):
 
-        for i in range(54, 63):
+        for i in range(45, 55):
             print(costumes[i])
 
 
 def hint(lifes, country_of_guessing_capital):
 
     if lifes == 1:
-        country_of_guessing_capital = country_of_guessing_capital[0]
+        country_of_guessing_capital = str("Hint: " + country_of_guessing_capital[0])
 
     else:
         country_of_guessing_capital = ""
@@ -225,41 +257,39 @@ def hint(lifes, country_of_guessing_capital):
 
 def open_lader_board():
 
-    leader_board = []
+    leaderboard = []
 
     with open('Leaderboard', 'r') as f:
 
         for row in f:
             print(row)
-            leader_board.append([row])
+            leaderboard.append([row])
+
+    return leaderboard
 
 
-    return Leaderboard
-
-
-def highscore(lifes, time, tries, guessing_word, name, end_game=True):
+def highscore(lifes, time, tries, guessing_word, name, leaderboard):
 
     highscore = []
     current_date = datetime.date.today()
 
     score = 100 + (lifes * 10) - (tries * 5) - (round(time, 2))
 
-    if end_game is True:
-        highscore.append(name)
-        highscore.append(" | ")
-        highscore.append(current_date)
-        highscore.append(" | ")
-        highscore.append(time)
-        highscore.append(" | ")
-        highscore.append(tries)
-        highscore.append(" | ")
-        highscore.append(guessing_word)
-        highscore.append(" | ")
-        highscore.append(score)
+    highscore.append(name)
+    highscore.append(" | ")
+    highscore.append(current_date)
+    highscore.append(" | ")
+    highscore.append(time)
+    highscore.append(" | ")
+    highscore.append(tries)
+    highscore.append(" | ")
+    highscore.append(guessing_word)
+    highscore.append(" | ")
+    highscore.append(score)
 
-        Leaderboard.append(highscore)
+    leaderboard.append(highscore)
 
-    return Leaderboard
+    return leaderboard
 
 
 def save_highscore(scores):
@@ -272,7 +302,7 @@ def save_highscore(scores):
         f.write(scores)
 
 
-def calculate_position(Leaderboard):
+def calculate_position(leaderboard):
     """ Argument: List
         Return: List
 
@@ -280,8 +310,8 @@ def calculate_position(Leaderboard):
 
     scores = []
 
-    for index in range(len(leader_board)):
-        scores.append([leader_board[index][0], int(leader_board[index][10])])
+    for index in range(len(leaderboard)):
+        scores.append([leaderboard[index][0], int(leaderboard[index][10])])
 
     start = True
 
@@ -298,15 +328,6 @@ def calculate_position(Leaderboard):
 
     return scores
 
-
-def dash():
-    pass # Tablica dwuindeksowa, pierwszt indeks = stolica, a drugi funckaj zamienia stolice na _, argument stolica, return liste stringow
-    """DONE"""
-
-def lifes():
-    #pass # Funkcja pobiera info o tym czy zgadujesz miasto czy litere i w zaleznosci od tego odejmuje zycia, zwraca informacje jesli zostalo jedno zycie, return zmienna
-
-    return "NaN"
 
 def hint2():
     pass # Funkcja pobiera parametr/argument o ostatnim zyciu i zwraca informacje do stage o printowaniu podpowiedzi w postaci Panstwa, argument zmienna life, return string nazwa panstwa
