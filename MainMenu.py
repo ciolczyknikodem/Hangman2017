@@ -233,7 +233,6 @@ def open_lader_board():
             print(row)
             leader_board.append([row])
 
-    print (leader_board)
 
     return Leaderboard
 
