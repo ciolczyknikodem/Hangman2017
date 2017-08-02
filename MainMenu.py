@@ -6,7 +6,7 @@ global capitals_list ; capitals_list = []
 global tries ; tries = []
 global guessed ; guessed = []
 global costume_state ; costume_state = 0
-global lives ; lives = 6
+global lifes ; lifes = 6
 
 def load_countries_and_capitals():
     global capitals_list
@@ -85,7 +85,6 @@ def main():
     load_countries_and_capitals()
     draw_menu_scene()
 
-
 def stage():
     globals().__setitem__("guessingTime", time.time())
     GuessingCapitalCountry = pick_random_capital(capitals_list)
@@ -96,9 +95,9 @@ def stage():
             if line.__contains__("%COSTUME"):
                 draws_a_costume()
                 continue
-            if line.__contains__("%LIVES") and line.__contains__("%TIME"):
+            if line.__contains__("%LIFES") and line.__contains__("%TIME"):
                 ActualTime = time.time()
-                line = line.replace("%LIVES", str(globals().get("lives")))
+                line = line.replace("%LIFES", str(globals().get("lifes")))
                 timeDifference = ActualTime - globals().get("guessingTime")
                 line = line.replace("%TIME", int(timeDifference).__str__() + " seconds")
             if line.__contains__("%TRIES"):
@@ -112,13 +111,27 @@ def stage():
                 dash_string = " ".join(dash_capital)
                 line = line.replace("%CAPITAL", dash_string)
             print (line)
-        check_if_asnwer_correct()
+        check_if_asnwer_correct(GuessingCapitalCountry)
 
-def check_if_asnwer_correct():
+def check_if_asnwer_correct(guessing_capital):
     # Funkcja pobiera informacje o lieterze/slowie uzytkowinika i podmienia _ w zgadywanym miescie na litery, argument zgadywana stolica, return liste stringow
+    capital = str(guessing_capital[1]).upper()
     answer = input("                                            Guess letter or the whole word (type ! to exit): ")
-    if(answer == "!"):
-        draw_quit_scene()
+    answer = answer.upper();
+    dash_capital = globals().get("dash_capital")
+    if answer.isalpha() and answer.__len__() == 1:
+        contains = False
+        i = 0;
+        for x in capital:
+            if(x == answer):
+                dash_capital[i] = answer
+                contains = True
+            i+=1
+        globals().__setitem__("dash_capital", dash_capital)
+    if(answer.isalpha() and answer.__len__() < 1):
+        exit(1)
+        if(capital == answer):
+            globals().__setitem__("dash_capital", answer)
 
 def draws_a_costume():
     costumes = open("HangmanPictures", 'r').readlines()
@@ -146,7 +159,8 @@ def draws_a_costume():
 
 
 def lifes():
-    pass # Funkcja pobiera info o tym czy zgadujesz miasto czy litere i w zaleznosci od tego odejmuje zycia, zwraca informacje jesli zostalo jedno zycie, return zmienna
+    #pass # Funkcja pobiera info o tym czy zgadujesz miasto czy litere i w zaleznosci od tego odejmuje zycia, zwraca informacje jesli zostalo jedno zycie, return zmienna
+
     return "NaN"
 def hint():
     pass # Funkcja pobiera parametr/argument o ostatnim zyciu i zwraca informacje do stage o printowaniu podpowiedzi w postaci Panstwa, argument zmienna life, return string nazwa panstwa
