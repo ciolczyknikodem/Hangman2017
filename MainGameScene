@@ -1,22 +1,10 @@
-LIVES: %LIVES                                                                              TIME: %TIME
-                                             ----------
-                                              |     |
-                                              |     @
-                                              |    /|
-                                              |     |
-                                              |    / \
-                                              |
-                                              |
-                                        ______________`
-
-
-TRIES: %TRIES
+                                            LIVES: %LIVES                                                                              TIME: %TIME
+%COSTUME
+                                            TRIES: %TRIES
 
 
 
-_ _ _ _ _
+                                                                                        %CAPITAL
 
 
-Characters guessed: %GUESSED
-
-Next guess (type ! to exit):
+                                            Characters or words guessed: %GUESSED
