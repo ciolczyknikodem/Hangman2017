@@ -130,6 +130,7 @@ def stage():
 
 def dash():
     pass # Tablica dwuindeksowa, pierwszt indeks = stolica, a drugi funckaj zamienia stolice na _, argument stolica, return liste stringow
+    """DONE"""
 
 def lifes():
     pass # Funkcja pobiera info o tym czy zgadujesz miasto czy litere i w zaleznosci od tego odejmuje zycia, zwraca informacje jesli zostalo jedno zycie, return zmienna
