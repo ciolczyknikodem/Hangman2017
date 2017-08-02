@@ -2,6 +2,7 @@ import os
 import time
 import random
 import datetime
+import operator
 
 global capitals_list; capitals_list = []
 global tries; tries = []
@@ -99,6 +100,7 @@ def change_capital_to_dash(guessing_capital):
 
     globals().__setitem__("dash_capital", dash_capital)
 
+
 def stage():
 
     globals().__setitem__("guessingTime", time.time())
@@ -143,24 +145,29 @@ def stage():
 
         check_if_asnwer_correct(GuessingCapitalCountry)
 
+
 def check_if_asnwer_correct(guessing_capital):
 
     # Funkcja pobiera informacje o lieterze/slowie uzytkowinika i podmienia _ w zgadywanym miescie na litery, argument zgadywana stolica, return liste stringow
     capital = str(guessing_capital[1]).upper()
     answer = input("                                            Guess letter or the whole word (type ! to exit): ")
-    answer = answer.upper();
+    answer = answer.upper()
     dash_capital = globals().get("dash_capital")
+
     if answer.isalpha() and answer.__len__() == 1:
         contains = False
-        i = 0;
+        i = 0
+
         for x in capital:
             if(x == answer):
                 dash_capital[i] = answer
                 contains = True
-            i+=1
+            i += 1
         globals().__setitem__("dash_capital", dash_capital)
+
     if(answer.isalpha() and answer.__len__() < 1):
         exit(1)
+
         if(capital == answer):
             globals().__setitem__("dash_capital", answer)
 
@@ -218,8 +225,15 @@ def hint(lifes, country_of_guessing_capital):
 
 def open_lader_board():
 
+    leader_board = []
+
     with open('Leaderboard', 'r') as f:
-        Leaderboard = f.read()
+
+        for row in f:
+            print(row)
+            leader_board.append([row])
+
+    print (leader_board)
 
     return Leaderboard
 
@@ -232,14 +246,58 @@ def highscore(lifes, time, tries, guessing_word, name, end_game=True):
     score = 100 + (lifes * 10) - (tries * 5) - (round(time, 2))
 
     if end_game is True:
-        highscore.insert(0, name)
-        highscore.insert(1, current_date)
-        highscore.insert(2, time)
-        highscore.insert(3, tries)
-        highscore.insert(4, guessing_word)
-        highscore.insert(5, score)
+        highscore.append(name)
+        highscore.append(" | ")
+        highscore.append(current_date)
+        highscore.append(" | ")
+        highscore.append(time)
+        highscore.append(" | ")
+        highscore.append(tries)
+        highscore.append(" | ")
+        highscore.append(guessing_word)
+        highscore.append(" | ")
+        highscore.append(score)
 
-    return highscore
+        Leaderboard.append(highscore)
+
+    return Leaderboard
+
+
+def save_highscore(scores):
+    """ Argument: List
+        Return: None
+
+        Function save scores to file"""
+
+    with open('Leaderboard', 'w') as f:
+        f.write(scores)
+
+
+def calculate_position(Leaderboard):
+    """ Argument: List
+        Return: List
+
+        Function use bubble sort to sorting list of players scores"""
+
+    scores = []
+
+    for index in range(len(leader_board)):
+        scores.append([leader_board[index][0], int(leader_board[index][10])])
+
+    start = True
+
+    while start:
+
+        start = False
+
+        for index in range(len(scores)-1):
+
+            if scores[index][1] < scores[index+1][1]:
+
+                scores[index][1], scores[index+1][1] = scores[index+1][1], scores[index][1]
+                start = True
+
+    return scores
 
 
 def dash():
