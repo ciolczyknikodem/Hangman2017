@@ -5,7 +5,7 @@ import datetime
 import operator
 
 global capitals_list; capitals_list = []
-global tries; tries = []
+global tries; tries = 0
 global guessed; guessed = []
 global costume_state;
 global lifes;
@@ -107,7 +107,7 @@ def draw_help_scene():
     for line in lines:
         print(line, end='')
     print("")
-    input("Type any key to back to main menu. ")
+    input("Press ENTER to back to main menu. ")
     draw_menu_scene()
 
 def stage():
@@ -141,9 +141,6 @@ def stage():
             if line.__contains__("%GUESSED"):
                 line = line.replace("%GUESSED", ",".join(guessed))
 
-            if line.__contains__("%TRIES"):
-                line = line.replace("%TRIES", "NaN")
-
             if line.__contains__("%CAPITAL"):
                 dash_capital = globals().get("dash_capital")
                 dash_string = " ".join(dash_capital)
@@ -171,7 +168,7 @@ def check_if_asnwer_correct(guessing_capital):
     answer = input("                                            Guess letter or the whole word (type ! to exit): ")
     answer = answer.upper()
     dash_capital = globals().get("dash_capital")
-
+    global tries
     if answer.isalpha() and answer.__len__() == 1:
         contains = False
         i = 0
@@ -202,6 +199,7 @@ def check_if_asnwer_correct(guessing_capital):
             lifes -=2
         if(guessed.__contains__(answer) == False):
             guessed.append(answer)
+    tries += 1
 
 
 def draws_a_costume():
@@ -255,7 +253,7 @@ def hint(lifes, country_of_guessing_capital):
     return country_of_guessing_capital
 
 
-def open_lader_board():
+def open_leaderboard():
 
     leaderboard = []
 
