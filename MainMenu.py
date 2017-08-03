@@ -266,7 +266,7 @@ def open_lader_board():
 
     leaderboard = []
 
-    with open('Leaderboard.csv', 'r', newline='') as f:
+    with open('Leaderboard.txt', 'r', newline='') as f:
         reader = csv.reader(f, delimiter='|', skipinitialspace=True)
 
         for row in reader:
@@ -360,7 +360,7 @@ def save_highscore(scores):
 
         Function save scores to file"""
 
-    with open('Leaderboard.csv', 'a', newline='') as f:
+    with open('Leaderboard.txt', 'a', newline='') as f:
         w = csv.writer(f, delimiter='|')
         scores = scores[0], scores[1], scores[2], scores[3], scores[4], scores[5], "pts"
         w.writerow(scores)
