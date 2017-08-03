@@ -5,13 +5,12 @@ import datetime
 import operator
 import csv
 
-global capitals_list; capitals_list = []
-global tries; tries = []
-global guessed; guessed = []
-global costume_state;
-global lifes;
-global dash_capital; dash_capital = []
-global costume_state,lifes
+capitals_list = []
+tries = []
+guessed = []
+global costume_state
+global lifes
+dash_capital = []
 
 
 def load_countries_and_capitals():
