@@ -187,7 +187,8 @@ def stage():
         if lifes <= 0:  # Check if player lose, ask for play again or back to menu
             time.sleep(1)
             lose_stage()
-            draw_leaderboard_scene()
+            scene = open_lader_board()
+            draw_leaderboard_scene(scene)
             play_again()
 
         if str(dash_capital).__contains__("_") is False:  # Check if player won, save score, display leader board
@@ -496,11 +497,9 @@ def lose_stage():
     os.system('clear')
     for line in open("LoseStageScene", 'r').readlines():
         print(line, end='')
-    answer = input("Type any key to try again or '!' to get main menu. ")
-    if(answer == "!"):
-        draw_menu_scene()
-    else:
-        stage()
+
+    time.sleep(2)
+    os.system('clear')
 
 
 def main():
