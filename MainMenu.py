@@ -5,6 +5,7 @@ import datetime
 import operator
 import csv
 
+
 capitals_list = []
 tries = 0
 guessed = []
@@ -14,9 +15,11 @@ dash_capital = []
 
 
 def load_countries_and_capitals():
+    """ Argument: None
+        Return: None
 
+        Function load countries and capitals from file"""
     global capitals_list
-
     for line in open("countries_and_capitals", 'r').readlines():
         temp = []
         temp.append(line.split(" | ")[0].upper())
@@ -25,7 +28,10 @@ def load_countries_and_capitals():
 
 
 def draw_menu_scene():
+    """ Argument: None
+        Return: None
 
+        Function draws main menu when the player run the program or return after failed/finished game"""
     bad_answer = False
     costume_state = 0
     scene = open("MainMenuScene", 'r').readlines()
@@ -69,7 +75,10 @@ def draw_menu_scene():
 
 
 def draw_quit_scene():
+    """ Argument: None
+        Return: None
 
+        Function draws a quit scene, when player decided to leave the game."""
     os.system('clear')
     scene = open("GameQuitScene", 'r').readlines()
 
@@ -108,6 +117,10 @@ def change_capital_to_dash(guessing_capital):
 
 
 def draw_help_scene():
+    """ Argument: None
+        Return: None
+
+        Function draws help scene, when player need help, by pressing 3 in the main menu"""
     os.system('clear')
     lines = open("HelpScene", 'r').readlines()
     for line in lines:
@@ -118,13 +131,15 @@ def draw_help_scene():
 
 
 def stage():
-    global dash_capital
+    """ Argument: None
+        Return: None
+
+        Function starts game, when the player pressed 1 in main menu or decided to play again"""
+    global dash_capital, lifes, costume_state, tries, guessed
+    lifes = 6; tries = 0 ; costume_state = 0 ; guessed = []
     globals().__setitem__("guessingTime", time.time())
     GuessingCapitalCountry = pick_random_capital(capitals_list)
     change_capital_to_dash(GuessingCapitalCountry)
-    global lifes, costume_state
-    lifes = 6
-    costume_state = 0
     while(True):
         os.system('clear')
         for line in open("MainGameScene", 'r').readlines():
@@ -157,24 +172,28 @@ def stage():
             print (line)
 
         if(lifes <= 0): # sprawdza czy uzytkownik przegrał
-            print("You have run out of your lives!")
-            end = time.time()
             time.sleep(1)
-            exit()
+            lose_stage()
 
         if(str(dash_capital).__contains__("_") == False): #sprawdza czy użytkownik wygrał
-            print("You won")
+            ActualTime = time.time()
+            timeDifference = ActualTime - globals().get("guessingTime")
             time.sleep(1)
-            end = time.time()
-            score_time = round(end - ActualTime, 2)
-            leaderboard = open_lader_board()
-            highscore(lifes, score_time, tries, GuessingCapitalCountry, leaderboard)
+            score = (lifes * 2000)/tries - timeDifference
+            end_stage_success(score)
+            # end = time.time()
+            # score_time = round(end - ActualTime, 2)
+            # leaderboard = open_lader_board()
+            # highscore(lifes, score_time, tries, GuessingCapitalCountry, leaderboard)
         check_if_asnwer_correct(GuessingCapitalCountry)
 
 def check_if_asnwer_correct(guessing_capital):
-    # Funkcja pobiera informacje o lieterze/slowie uzytkowinika i podmienia _ w zgadywanym miescie na litery, argument zgadywana stolica, return liste stringow
+    """ Argument: string
+        Return: None
+
+        Function checks if player typed wrong or right answer. If typed righ answer increment tries variable, otherwise decetrements lifes and increments tries variables"""
     capital = str(guessing_capital[1]).upper()
-    answer = input("                                            Guess letter or the whole word (type ! to exit): ")
+    answer = input("                                            Guess a letter or the whole word: ")
     answer = answer.upper()
     dash_capital = globals().get("dash_capital")
     global tries
@@ -211,7 +230,10 @@ def check_if_asnwer_correct(guessing_capital):
 
 
 def draws_a_costume():
+    """ Argument: None
+        Return: None
 
+        Functions draws costume why player plays the game. The type of costume depeds on lifes amount variable"""
     costumes = open("HangmanPictures", 'r').readlines()
     global costume_state
     if(costume_state == 0):
@@ -251,7 +273,10 @@ def draws_a_costume():
 
 
 def hint(lifes, country_of_guessing_capital):
+    """ Argument: None
+        Return: None
 
+        Function shows a hint when player have 1 life left."""
     if lifes == 1:
         country_of_guessing_capital = str("Hint: " + country_of_guessing_capital[0])
 
@@ -262,152 +287,152 @@ def hint(lifes, country_of_guessing_capital):
 
 
 
+def open_lader_board():
+    # Czytanie z pliku dziala elegancko
+    leaderboard = []
+
+    with open('Leaderboard.csv', 'r', newline='') as f:
+        reader = csv.reader(f, delimiter='|', skipinitialspace=True)
+
+        for row in reader:
+            leaderboard.append(row)
+
+    return leaderboard
 
 
+def draw_leaderboard_scene():
+    # Tutaj jak narazie dziala tylko czytanie asci art
+    # Trzeba zrobic zmienna max_item_lenght i wzgledem jej dlugosci printowac liste wynikow tj. dlugosc - dlugosc wstawianej rezczy i wtedy | itd
+    # Jak cos jutro to moge zrobic
+    with open('LeaderboardScreen.txt', 'r') as f:
+        reader = f.read()
+
+    print(reader)
+
+    leaderboard = open_lader_board()
+    print(leaderboard)
+
+    max_item_lenght = 0
+
+    for item in leaderboard:
+
+        for words in item:
+            words.split()
+
+            for letters in words:
+                letters.split()
+
+                if len(words) > max_item_lenght:
+                    max_item_lenght = len(words)
+
+    input('Enter any key to back to menu:')
+    draw_menu_scene()
 
 
+def highscore(lifes, time, tries, guessing_word, leaderboard):
+
+    name = input("Enter your nick:\n")
+
+    highscore = []
+    current_date = datetime.date.today()
+
+    lifes = lifes * 10
+    tries = lifes * 2
+    guessing_word = "".join(guessing_word[1])
+    print(time)
+    time = int(round(time, 0))
+    print(time)
+
+    score = 100 + lifes - tries - time # Score jest zle wyliczany, trzeba pogrzebac w zmiennych i zrobic sensownie to dzialanie.
+                                       # Nie mozesz miec floatow bo nie bedzie sortowal
+    print (score)
+
+    highscore.append(name)
+    highscore.append(current_date)
+    highscore.append(time)
+    highscore.append(tries)
+    highscore.append(guessing_word)
+    highscore.append(score)
+
+    # leaderboard.append(highscore)
+    print(highscore)
+    save_highscore(highscore)
+    leaderboard = open_lader_board()
+    print(leaderboard)
+    calculate_position(leaderboard)
+    draw_leaderboard_scene()
 
 
+def save_highscore(scores):
+    """ Argument: List
+        Return: None
+
+        Function save scores to file"""
+# Save dziala elegancko
+    with open('Leaderboard.csv', 'a', newline='') as f:
+        w = csv.writer(f, delimiter='|')
+        scores = [scores[0], scores[1], scores[2], scores[3], scores[4], scores[5]]
+        w.writerow(scores)
 
 
+def calculate_position(leaderboard):
+    """ Argument: List
+        Return: List
+
+        Function use bubble sort to sorting list of players scores"""
+
+    scores = []
+    # Generalnie sortowanie dziala, tzn sama funckja jest napisana dobrze.
+    # Jedyne co stanowi problem to pozmienialy sie indexy jak przerabialem zapisywanie/czytanie pliku trzeba tu poprawic sciezke dostepu do listy ptk
+    for index in range(len(leaderboard)):
+        scores.append([leaderboard[index][0], int(leaderboard[index][5])])
+
+    start = True
+
+    while start:
+
+        start = False
+
+        for index in range(len(scores)-1):
+
+            if scores[index][1] < scores[index+1][1]:
+
+                scores[index][1], scores[index+1][1] = scores[index+1][1], scores[index][1]
+                start = True
+
+    return scores
 
 
+def end_stage_success(score):
+    """ Argument: List
+        Return: None
 
+        Function prints end stage if player won the game"""
+    os.system('clear')
+    for line in open("SuccessScene", 'r').readlines():
+        if(line.__contains__("%SCORE")):
+            line = line.replace("%SCORE", str(score).split(".")[0])
+        print(line, end='')
+    answer = input("Type any key to try again or '!' to get main menu. ")
+    if(answer == "!"):
+        draw_menu_scene()
+    else:
+        stage()
 
-
-
-
-
-
-
-
-
-
-
-
-
-#
-# def open_lader_board():
-#     # Czytanie z pliku dziala elegancko
-#     leaderboard = []
-#
-#     with open('Leaderboard.csv', 'r', newline='') as f:
-#         reader = csv.reader(f, delimiter='|', skipinitialspace=True)
-#
-#         for row in reader:
-#             leaderboard.append(row)
-#
-#     return leaderboard
-#
-#
-# def draw_leaderboard_scene():
-#     # Tutaj jak narazie dziala tylko czytanie asci art
-#     # Trzeba zrobic zmienna max_item_lenght i wzgledem jej dlugosci printowac liste wynikow tj. dlugosc - dlugosc wstawianej rezczy i wtedy | itd
-#     # Jak cos jutro to moge zrobic
-#     with open('LeaderboardScreen.txt', 'r') as f:
-#         reader = f.read()
-#
-#     print(reader)
-#
-#     leaderboard = open_lader_board()
-#     print(leaderboard)
-#
-#     max_item_lenght = 0
-#
-#     for item in leaderboard:
-#
-#         for words in item:
-#             words.split()
-#
-#             for letters in words:
-#                 letters.split()
-#
-#                 if len(words) > max_item_lenght:
-#                     max_item_lenght = len(words)
-#
-#     input('Enter any key to back to menu:')
-#     draw_menu_scene()
-#
-#
-# def highscore(lifes, time, tries, guessing_word, leaderboard):
-#
-#     name = input("Enter your nick:\n")
-#
-#     highscore = []
-#     current_date = datetime.date.today()
-#
-#     lifes = lifes * 10
-#     tries = lifes * 2
-#     guessing_word = "".join(guessing_word[1])
-#     print(time)
-#     time = int(round(time, 0))
-#     print(time)
-#
-#     score = 100 + lifes - tries - time # Score jest zle wyliczany, trzeba pogrzebac w zmiennych i zrobic sensownie to dzialanie.
-#                                        # Nie mozesz miec floatow bo nie bedzie sortowal
-#     print (score)
-#
-#     highscore.append(name)
-#     highscore.append(current_date)
-#     highscore.append(time)
-#     highscore.append(tries)
-#     highscore.append(guessing_word)
-#     highscore.append(score)
-#
-#     # leaderboard.append(highscore)
-#     print(highscore)
-#     save_highscore(highscore)
-#     leaderboard = open_lader_board()
-#     print(leaderboard)
-#     calculate_position(leaderboard)
-#     draw_leaderboard_scene()
-#
-#
-# def save_highscore(scores):
-#     """ Argument: List
-#         Return: None
-#
-#         Function save scores to file"""
-# # Save dziala elegancko
-#     with open('Leaderboard.csv', 'a', newline='') as f:
-#         w = csv.writer(f, delimiter='|')
-#         scores = [scores[0], scores[1], scores[2], scores[3], scores[4], scores[5]]
-#         w.writerow(scores)
-#
-#
-# def calculate_position(leaderboard):
-#     """ Argument: List
-#         Return: List
-#
-#         Function use bubble sort to sorting list of players scores"""
-#
-#     scores = []
-#     # Generalnie sortowanie dziala, tzn sama funckja jest napisana dobrze.
-#     # Jedyne co stanowi problem to pozmienialy sie indexy jak przerabialem zapisywanie/czytanie pliku trzeba tu poprawic sciezke dostepu do listy ptk
-#     for index in range(len(leaderboard)):
-#         scores.append([leaderboard[index][0], int(leaderboard[index][5])])
-#
-#     start = True
-#
-#     while start:
-#
-#         start = False
-#
-#         for index in range(len(scores)-1):
-#
-#             if scores[index][1] < scores[index+1][1]:
-#
-#                 scores[index][1], scores[index+1][1] = scores[index+1][1], scores[index][1]
-#                 start = True
-#
-#     return scores
-
-
-def end_stage_succes():
-    pass # Funkcja printuje tablice wyniku innych graczy, pobiera z pliku info, wylicza ktore miejsce zajales || Argumnet: list highscore || Return Liste wszystkich wynikow np top 10
 
 def lose_stage():
-    pass # Funkcja printuje ekran przegranej i pyta o ponowna gre || Argument: lifes || Return None
+    """ Argument: None
+        Return: None
+
+        Function prints end stage if player won the game"""
+    os.system('clear')
+    for line in open("LoseStageScene", 'r').readlines():
+        print(line, end='')
+    answer = input("Type any key to try again or '!' to get main menu. ")
+    if(answer == "!"):
+        draw_menu_scene()
+    else:
+        stage()
 
 
 def main():
