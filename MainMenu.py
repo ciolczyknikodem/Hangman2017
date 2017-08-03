@@ -187,6 +187,7 @@ def stage():
         if lifes <= 0:  # Check if player lose, ask for play again or back to menu
             time.sleep(1)
             lose_stage()
+            draw_leaderboard_scene()
             play_again()
 
         if str(dash_capital).__contains__("_") is False:  # Check if player won, save score, display leader board
