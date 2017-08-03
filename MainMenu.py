@@ -2,7 +2,6 @@ import os
 import time
 import random
 import datetime
-import operator
 import csv
 
 
@@ -19,6 +18,7 @@ def load_countries_and_capitals():
         Return: None
 
         Function load countries and capitals from file"""
+
     global capitals_list
     for line in open("countries_and_capitals", 'r').readlines():
         temp = []
@@ -32,6 +32,7 @@ def draw_menu_scene():
         Return: None
 
         Function draws main menu when the player run the program or return after failed/finished game"""
+
     bad_answer = False
     costume_state = 0
     scene = open("MainMenuScene", 'r').readlines()
@@ -60,7 +61,10 @@ def draw_menu_scene():
             x = False
             os.system('clear')
             score = open_lader_board()
-            draw_leaderboard_scene(score)
+            score_board = calculate_position(score)
+            draw_leaderboard_scene(score_board)
+            input('\nEneter any key to back')
+            draw_menu_scene()
 
         elif choice == "3":
             draw_help_scene()
@@ -80,6 +84,7 @@ def draw_quit_scene():
         Return: None
 
         Function draws a quit scene, when player decided to leave the game."""
+
     os.system('clear')
     scene = open("GameQuitScene", 'r').readlines()
 
@@ -93,8 +98,8 @@ def pick_random_capital(capitals_list):
 
         Function take all capitals with countries, chose 1 of them
         and return 1 randomly position of all capitals/countries """
+
     GuessingCapitalCountry = random.choice(capitals_list)
-    print(GuessingCapitalCountry)
     return GuessingCapitalCountry
 
 
@@ -124,8 +129,10 @@ def draw_help_scene():
         Function draws help scene, when player need help, by pressing 3 in the main menu"""
     os.system('clear')
     lines = open("HelpScene", 'r').readlines()
+
     for line in lines:
         print(line, end='')
+
     print("")
     input("Press ENTER to back to main menu. ")
     draw_menu_scene()
@@ -137,12 +144,17 @@ def stage():
 
         Function starts game, when the player pressed 1 in main menu or decided to play again"""
     global dash_capital, lifes, costume_state, tries, guessed
-    lifes = 6; tries = 0 ; costume_state = 0 ; guessed = []
+    lifes = 6
+    tries = 0
+    costume_state = 0
+    guessed = []
     globals().__setitem__("guessingTime", time.time())
     GuessingCapitalCountry = pick_random_capital(capitals_list)
     change_capital_to_dash(GuessingCapitalCountry)
-    while(True):
+
+    while True:
         os.system('clear')
+
         for line in open("MainGameScene", 'r').readlines():
 
             if line.__contains__("%COSTUME"):
@@ -172,20 +184,29 @@ def stage():
 
             print (line)
 
-        if(lifes <= 0): # sprawdza czy uzytkownik przegrał
+        if lifes <= 0:  # Check if player lose, ask for play again or back to menu
             time.sleep(1)
             lose_stage()
+            play_again()
 
-        if(str(dash_capital).__contains__("_") == False): #sprawdza czy użytkownik wygrał
+        if str(dash_capital).__contains__("_") is False:  # Check if player won, save score, display leader board
             ActualTime = time.time()
             timeDifference = ActualTime - globals().get("guessingTime")
             time.sleep(1)
+
             score = (lifes * 2000)/tries - timeDifference
+            score = str(score).split(".")[0]
+            timer = round(timeDifference, 0)
+
             end_stage_success(score)
-            # end = time.time()
-            # score_time = round(end - ActualTime, 2)
-            # leaderboard = open_lader_board()
-            # highscore(lifes, score_time, tries, GuessingCapitalCountry, leaderboard)
+            os.system('clear')
+            highscore(timer, tries, GuessingCapitalCountry, int(score))
+
+            score_board = open_lader_board()
+            scene = calculate_position(score_board)
+
+            draw_leaderboard_scene(scene)
+            play_again()
         check_if_asnwer_correct(GuessingCapitalCountry)
 
 
@@ -199,33 +220,43 @@ def check_if_asnwer_correct(guessing_capital):
     answer = answer.upper()
     dash_capital = globals().get("dash_capital")
     global tries
+
     if answer.isalpha() and answer.__len__() == 1:
         contains = False
         i = 0
+
         for x in capital:
+
             if(x == answer):
                 dash_capital[i] = answer
                 contains = True
-            i+=1
-        if(contains == True):
+
+            i += 1
+
+        if contains is True:
             globals().__setitem__("dash_capital", dash_capital)
+
         else:
-            global  costume_state,lifes
-            costume_state +=1
-            lifes -=1
-        if(guessed.__contains__(answer) == False):
+            global costume_state, lifes
+            costume_state += 1
+            lifes -= 1
+
+        if(guessed.__contains__(answer) is False):
             guessed.append(answer)
         tries += 1
     answer = answer.replace(" ", "")
     capital = capital.replace(" ", "")
+
     if(answer.isalpha() and answer.__len__() > 1):
+
         if(capital == answer):
             globals().__setitem__("dash_capital", answer)
+
         else:
             # global  costume_state,lifes
-            costume_state +=1
-            lifes -=2
-        if(guessed.__contains__(answer) == False):
+            costume_state += 1
+            lifes -= 2
+        if guessed.__contains__(answer) is False:
             guessed.append(answer)
         tries += 1
 
@@ -235,6 +266,7 @@ def draws_a_costume():
         Return: None
 
         Functions draws costume why player plays the game. The type of costume depeds on lifes amount variable"""
+
     costumes = open("HangmanPictures", 'r').readlines()
     global costume_state
     if(costume_state == 0):
@@ -288,6 +320,10 @@ def hint(lifes, country_of_guessing_capital):
 
 
 def open_lader_board():
+    """Argument: None
+       Return: List
+
+       Function read data from file and make them list"""
 
     leaderboard = []
 
@@ -297,17 +333,28 @@ def open_lader_board():
         for row in reader:
             leaderboard.append(row)
 
-    score = calculate_position(leaderboard)
-
-    return score
+    return leaderboard
 
 
 def draw_leaderboard_scene(score):
+    """Argument: List
+       Return: None
+
+       Function display asci Art and run drawing_highscore function"""
 
     with open('LeaderboardScreen.txt', 'r') as f:
         reader = f.read()
 
     print(reader)
+
+    highscore = draw_highscore(score)
+
+
+def draw_highscore(score):
+    """Argument: List of scores
+       Return: None
+
+       Function take list of players scores and display best 10 scores"""
 
     for index in range(len(score)):
         pts = score[index][5]
@@ -345,26 +392,18 @@ def draw_leaderboard_scene(score):
         else:
             break
 
-    input('\n Enter any key to back to menu:')
-    draw_menu_scene()
 
+def highscore(time, tries, guessing_word, score):
+    """Argument: strings
+       Return: List of strings
 
-
-def highscore(lifes, time, tries, guessing_word, leaderboard):
+       Function make list of info about plers game"""
 
     name = input("Enter your nick:\n")
 
     highscore = []
     current_date = datetime.date.today()
-
-    lifes = lifes * 10
-    tries = lifes * 2
     guessing_word = "".join(guessing_word[1])
-    time = int(round(time, 0))
-
-    score = 100 + lifes - tries - time # Score jest zle wyliczany, trzeba pogrzebac w zmiennych i zrobic sensownie to dzialanie.
-                                       # Nie mozesz miec floatow bo nie bedzie sortowal
-    print (score)
 
     highscore.append(name)
     highscore.append(current_date)
@@ -374,10 +413,9 @@ def highscore(lifes, time, tries, guessing_word, leaderboard):
     highscore.append(score)
 
     save_highscore(highscore)
-    leaderboard = open_lader_board()
-    # calculate_position(leaderboard)
-    score = calculate_position(leaderboard)
-    draw_leaderboard_scene(score)
+    os.system('clear')
+
+    return highscore
 
 
 def save_highscore(scores):
@@ -386,9 +424,7 @@ def save_highscore(scores):
 
     with open('Leaderboard.txt', 'a', newline='') as f:
         w = csv.writer(f, delimiter='|')
-        scores = scores[0], scores[1], scores[2], scores[3], scores[4], scores[5], "pts"
         w.writerow(scores)
-
 
 
 def calculate_position(leaderboard):
@@ -398,18 +434,10 @@ def calculate_position(leaderboard):
         Function use bubble sort to sorting list of players scores"""
 
     scores = []
-    # Generalnie sortowanie dziala, tzn sama funckja jest napisana dobrze.
-    # Jedyne co stanowi problem to pozmienialy sie indexy jak przerabialem zapisywanie/czytanie pliku trzeba tu poprawic sciezke dostepu do listy ptk
-    for index in range(len(leaderboard)):
-        scores.append([leaderboard[index][0], int(leaderboard[index][5])])
-
-
-    scores = []
 
     for index in range(len(leaderboard)):
         scores.append([leaderboard[index][0], leaderboard[index][1], leaderboard[index][2], leaderboard[index][3],
                       leaderboard[index][4], int(leaderboard[index][5])])
-
 
     start = True
 
@@ -419,10 +447,9 @@ def calculate_position(leaderboard):
 
         for index in range(len(scores)-1):
 
+            if scores[index][5] < scores[index+1][5]:
 
-            if scores[index][1] < scores[index+1][1]:
-
-                scores[index][1], scores[index+1][1] = scores[index+1][1], scores[index][1]
+                scores[index][5], scores[index+1][5] = scores[index+1][5], scores[index][5]
                 start = True
 
     return scores
@@ -433,14 +460,29 @@ def end_stage_success(score):
         Return: None
 
         Function prints end stage if player won the game"""
+
     os.system('clear')
+
     for line in open("SuccessScene", 'r').readlines():
+
         if(line.__contains__("%SCORE")):
             line = line.replace("%SCORE", str(score).split(".")[0])
+
         print(line, end='')
-    answer = input("Type any key to try again or '!' to get main menu. ")
+    time.sleep(3)
+
+
+def play_again():
+    """Argument: None
+       Return: None
+
+       Function ask player to play again or back to menu"""
+
+    answer = input("\nType any key to try again or '!' to get main menu. ")
+
     if(answer == "!"):
         draw_menu_scene()
+
     else:
         stage()
 
@@ -458,7 +500,6 @@ def lose_stage():
         draw_menu_scene()
     else:
         stage()
-
 
 
 def main():
