@@ -5,13 +5,12 @@ import datetime
 import operator
 import csv
 
-global capitals_list; capitals_list = []
-global tries; tries = 0
-global guessed; guessed = []
-global costume_state;
-global lifes;
-global dash_capital; dash_capital = []
-global costume_state,lifes
+capitals_list = []
+tries = 0
+guessed = []
+costume_state = 0;
+lifes = 6;
+dash_capital = []
 
 
 def load_countries_and_capitals():
@@ -263,120 +262,145 @@ def hint(lifes, country_of_guessing_capital):
 
 
 
-def open_lader_board():
-    # Czytanie z pliku dziala elegancko
-    leaderboard = []
-
-    with open('Leaderboard.csv', 'r', newline='') as f:
-        reader = csv.reader(f, delimiter='|', skipinitialspace=True)
-
-        for row in reader:
-            leaderboard.append(row)
-
-    return leaderboard
 
 
-def draw_leaderboard_scene():
-    # Tutaj jak narazie dziala tylko czytanie asci art
-    # Trzeba zrobic zmienna max_item_lenght i wzgledem jej dlugosci printowac liste wynikow tj. dlugosc - dlugosc wstawianej rezczy i wtedy | itd
-    # Jak cos jutro to moge zrobic
-    with open('LeaderboardScreen.txt', 'r') as f:
-        reader = f.read()
-
-    print(reader)
-
-    leaderboard = open_lader_board()
-    print(leaderboard)
-
-    max_item_lenght = 0
-
-    for item in leaderboard:
-
-        for words in item:
-            words.split()
-
-            for letters in words:
-                letters.split()
-
-                if len(words) > max_item_lenght:
-                    max_item_lenght = len(words)
-
-    input('Enter any key to back to menu:')
-    draw_menu_scene()
 
 
-def highscore(lifes, time, tries, guessing_word, leaderboard):
-
-    name = input("Enter your nick:\n")
-
-    highscore = []
-    current_date = datetime.date.today()
-
-    lifes = lifes * 10
-    tries = lifes * 2
-    guessing_word = "".join(guessing_word[1])
-    print(time)
-    time = int(round(time, 0))
-    print(time)
-
-    score = 100 + lifes - tries - time # Score jest zle wyliczany, trzeba pogrzebac w zmiennych i zrobic sensownie to dzialanie.
-                                       # Nie mozesz miec floatow bo nie bedzie sortowal
-    print (score)
-
-    highscore.append(name)
-    highscore.append(current_date)
-    highscore.append(time)
-    highscore.append(tries)
-    highscore.append(guessing_word)
-    highscore.append(score)
-
-    # leaderboard.append(highscore)
-    print(highscore)
-    save_highscore(highscore)
-    leaderboard = open_lader_board()
-    print(leaderboard)
-    calculate_position(leaderboard)
-    draw_leaderboard_scene()
 
 
-def save_highscore(scores):
-    """ Argument: List
-        Return: None
-
-        Function save scores to file"""
-# Save dziala elegancko
-    with open('Leaderboard.csv', 'a', newline='') as f:
-        w = csv.writer(f, delimiter='|')
-        scores = [scores[0], scores[1], scores[2], scores[3], scores[4], scores[5]]
-        w.writerow(scores)
 
 
-def calculate_position(leaderboard):
-    """ Argument: List
-        Return: List
 
-        Function use bubble sort to sorting list of players scores"""
 
-    scores = []
-    # Generalnie sortowanie dziala, tzn sama funckja jest napisana dobrze.
-    # Jedyne co stanowi problem to pozmienialy sie indexy jak przerabialem zapisywanie/czytanie pliku trzeba tu poprawic sciezke dostepu do listy ptk
-    for index in range(len(leaderboard)):
-        scores.append([leaderboard[index][0], int(leaderboard[index][5])])
 
-    start = True
 
-    while start:
 
-        start = False
 
-        for index in range(len(scores)-1):
 
-            if scores[index][1] < scores[index+1][1]:
 
-                scores[index][1], scores[index+1][1] = scores[index+1][1], scores[index][1]
-                start = True
 
-    return scores
+
+
+
+
+
+
+
+#
+# def open_lader_board():
+#     # Czytanie z pliku dziala elegancko
+#     leaderboard = []
+#
+#     with open('Leaderboard.csv', 'r', newline='') as f:
+#         reader = csv.reader(f, delimiter='|', skipinitialspace=True)
+#
+#         for row in reader:
+#             leaderboard.append(row)
+#
+#     return leaderboard
+#
+#
+# def draw_leaderboard_scene():
+#     # Tutaj jak narazie dziala tylko czytanie asci art
+#     # Trzeba zrobic zmienna max_item_lenght i wzgledem jej dlugosci printowac liste wynikow tj. dlugosc - dlugosc wstawianej rezczy i wtedy | itd
+#     # Jak cos jutro to moge zrobic
+#     with open('LeaderboardScreen.txt', 'r') as f:
+#         reader = f.read()
+#
+#     print(reader)
+#
+#     leaderboard = open_lader_board()
+#     print(leaderboard)
+#
+#     max_item_lenght = 0
+#
+#     for item in leaderboard:
+#
+#         for words in item:
+#             words.split()
+#
+#             for letters in words:
+#                 letters.split()
+#
+#                 if len(words) > max_item_lenght:
+#                     max_item_lenght = len(words)
+#
+#     input('Enter any key to back to menu:')
+#     draw_menu_scene()
+#
+#
+# def highscore(lifes, time, tries, guessing_word, leaderboard):
+#
+#     name = input("Enter your nick:\n")
+#
+#     highscore = []
+#     current_date = datetime.date.today()
+#
+#     lifes = lifes * 10
+#     tries = lifes * 2
+#     guessing_word = "".join(guessing_word[1])
+#     print(time)
+#     time = int(round(time, 0))
+#     print(time)
+#
+#     score = 100 + lifes - tries - time # Score jest zle wyliczany, trzeba pogrzebac w zmiennych i zrobic sensownie to dzialanie.
+#                                        # Nie mozesz miec floatow bo nie bedzie sortowal
+#     print (score)
+#
+#     highscore.append(name)
+#     highscore.append(current_date)
+#     highscore.append(time)
+#     highscore.append(tries)
+#     highscore.append(guessing_word)
+#     highscore.append(score)
+#
+#     # leaderboard.append(highscore)
+#     print(highscore)
+#     save_highscore(highscore)
+#     leaderboard = open_lader_board()
+#     print(leaderboard)
+#     calculate_position(leaderboard)
+#     draw_leaderboard_scene()
+#
+#
+# def save_highscore(scores):
+#     """ Argument: List
+#         Return: None
+#
+#         Function save scores to file"""
+# # Save dziala elegancko
+#     with open('Leaderboard.csv', 'a', newline='') as f:
+#         w = csv.writer(f, delimiter='|')
+#         scores = [scores[0], scores[1], scores[2], scores[3], scores[4], scores[5]]
+#         w.writerow(scores)
+#
+#
+# def calculate_position(leaderboard):
+#     """ Argument: List
+#         Return: List
+#
+#         Function use bubble sort to sorting list of players scores"""
+#
+#     scores = []
+#     # Generalnie sortowanie dziala, tzn sama funckja jest napisana dobrze.
+#     # Jedyne co stanowi problem to pozmienialy sie indexy jak przerabialem zapisywanie/czytanie pliku trzeba tu poprawic sciezke dostepu do listy ptk
+#     for index in range(len(leaderboard)):
+#         scores.append([leaderboard[index][0], int(leaderboard[index][5])])
+#
+#     start = True
+#
+#     while start:
+#
+#         start = False
+#
+#         for index in range(len(scores)-1):
+#
+#             if scores[index][1] < scores[index+1][1]:
+#
+#                 scores[index][1], scores[index+1][1] = scores[index+1][1], scores[index][1]
+#                 start = True
+#
+#     return scores
 
 
 def end_stage_succes():
