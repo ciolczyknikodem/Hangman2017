@@ -41,3 +41,4 @@ saves_score_string("arka2", "gdynia", "kurwa", "świnia", "XD", 1231231232)
 saves_score_string("test", "test2", "test3", "test4", "test", 123)
 calculate_scores()
 print_leaderboard()
+
